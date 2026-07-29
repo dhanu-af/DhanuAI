@@ -10,3 +10,5 @@ build
 src/generated
 *.tsbuildinfo
 scripts/exported-data.json
+scripts/translation-queue.json
+scripts/translation-batch.json

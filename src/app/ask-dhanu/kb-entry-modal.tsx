@@ -7,6 +7,7 @@ import { KB_CATEGORY_LABEL } from "@/lib/ui";
 import type { KbCategory } from "@/generated/prisma";
 import type { KbEntry } from "./ask-dhanu-client";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const CATEGORY_OPTIONS = Object.keys(KB_CATEGORY_LABEL) as KbCategory[];
 
@@ -34,6 +35,7 @@ export default function KbEntryModal({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [pending, startTransition] = useTransition();
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
@@ -73,14 +75,14 @@ export default function KbEntryModal({
         fd.append("file", file);
         const text = await extractPdfText(fd);
         if (!text) {
-          setExtractError("No selectable text was found in this PDF (it may be a scanned image).");
+          setExtractError(t("pdfNoText"));
         } else {
           setAnswerValue(text);
           if (!titleValue.trim()) setTitleValue(titleFromFileName(file.name));
           if (!sourceValue.trim()) setSourceValue(file.name);
         }
       } catch (err) {
-        setExtractError(err instanceof Error ? err.message : "Couldn't read that PDF.");
+        setExtractError(err instanceof Error ? err.message : t("pdfReadError"));
       } finally {
         setExtracting(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -93,7 +95,7 @@ export default function KbEntryModal({
       <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-white/[0.1] bg-[#0d0d10] p-5 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-zinc-100">
-            {entry ? "Edit Knowledge Entry" : "Add Knowledge Entry"}
+            {entry ? t("editEntryTitle") : t("addEntryTitle")}
           </h2>
           <button onClick={onClose} className="text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200">
             ✕
@@ -101,7 +103,7 @@ export default function KbEntryModal({
         </div>
 
         <div className="mb-4 rounded-lg border border-white/[0.1] bg-white/[0.04] p-3">
-          <Field label="Or upload a PDF — its text will fill in the Answer field below for you to review">
+          <Field label={t("pdfUploadLabel")}>
             <input
               ref={fileInputRef}
               type="file"
@@ -111,12 +113,12 @@ export default function KbEntryModal({
               className="w-full text-sm text-zinc-200 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-zinc-900 file:transition-colors file:duration-150 file:ease-out"
             />
           </Field>
-          {extracting && <p className="mt-1.5 text-xs text-zinc-500">Extracting text…</p>}
+          {extracting && <p className="mt-1.5 text-xs text-zinc-500">{t("extracting")}</p>}
           {extractError && <p className="mt-1.5 text-xs text-red-400">{extractError}</p>}
         </div>
 
         <form action={submit} className="space-y-3">
-          <Field label="Category">
+          <Field label={t("categoryLabel")}>
             <select
               name="category"
               defaultValue={entry?.category ?? "MACHINE_TROUBLESHOOTING"}
@@ -129,26 +131,26 @@ export default function KbEntryModal({
               ))}
             </select>
           </Field>
-          <Field label="Title / Symptom">
+          <Field label={t("titleLabel")}>
             <input
               name="title"
               required
               value={titleValue}
               onChange={(e) => setTitleValue(e.target.value)}
-              placeholder="e.g. Capsules are not closing properly"
+              placeholder={t("titlePlaceholder")}
               className="input"
             />
           </Field>
-          <Field label="Keywords (comma-separated, helps search match this entry)">
+          <Field label={t("keywordsLabel")}>
             <input
               name="keywords"
               required
               defaultValue={entry?.keywords ?? ""}
-              placeholder="e.g. capsules not closing, closing plate gap"
+              placeholder={t("keywordsPlaceholder")}
               className="input"
             />
           </Field>
-          <Field label="Cause (optional)">
+          <Field label={t("causeLabel")}>
             <textarea
               name="cause"
               rows={2}
@@ -156,7 +158,7 @@ export default function KbEntryModal({
               className="input"
             />
           </Field>
-          <Field label="Answer / Solution">
+          <Field label={t("answerLabel")}>
             <textarea
               name="answer"
               required
@@ -166,21 +168,21 @@ export default function KbEntryModal({
               className="input"
             />
           </Field>
-          <Field label="Source (optional)">
+          <Field label={t("sourceLabel")}>
             <input
               name="source"
               value={sourceValue}
               onChange={(e) => setSourceValue(e.target.value)}
-              placeholder="e.g. NJP-800C manual, Section 8"
+              placeholder={t("sourcePlaceholder")}
               className="input"
             />
           </Field>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={onClose}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Saving..." : "Save"}
+              {pending ? t("saving") : t("save")}
             </Button>
           </div>
         </form>

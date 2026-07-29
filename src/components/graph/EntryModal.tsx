@@ -4,8 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { KbGraphEntry } from "@/lib/graph/types";
 import { KB_CATEGORY_COLOR } from "@/lib/graph/types";
 import { KB_CATEGORY_LABEL } from "@/lib/ui";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | null; onClose: () => void }) {
+  const { t } = useLanguage();
   return (
     <AnimatePresence>
       {entry && (
@@ -51,19 +53,19 @@ export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | n
 
             {entry.cause && (
               <div className="mt-4">
-                <span className="text-[11px] uppercase tracking-wider text-zinc-500">Likely cause</span>
+                <span className="text-[11px] uppercase tracking-wider text-zinc-500">{t("likelyCause")}</span>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">{entry.cause}</p>
               </div>
             )}
 
             <div className="mt-4">
-              <span className="text-[11px] uppercase tracking-wider text-zinc-500">Answer / Solution</span>
+              <span className="text-[11px] uppercase tracking-wider text-zinc-500">{t("answerSolution")}</span>
               <p className="mt-1.5 whitespace-pre-line text-[13px] leading-relaxed text-zinc-300">{entry.answer}</p>
             </div>
 
             {entry.source && (
               <div className="mt-4">
-                <span className="text-[11px] uppercase tracking-wider text-zinc-500">Source</span>
+                <span className="text-[11px] uppercase tracking-wider text-zinc-500">{t("source")}</span>
                 <p className="mt-1.5 text-[13px] text-zinc-400">{entry.source}</p>
               </div>
             )}

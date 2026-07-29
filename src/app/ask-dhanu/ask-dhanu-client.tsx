@@ -11,6 +11,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { logout } from "@/lib/auth-actions";
 
 export type KbEntry = {
@@ -70,13 +72,6 @@ const CATEGORY_ORDER: KbCategory[] = [
   "POLICIES_PROCEDURES",
 ];
 
-const SAMPLE_QUESTIONS = [
-  "Capsules are not closing properly, what do I do?",
-  "Machine suddenly stopped while running",
-  "What PPE do I need before entering the blending room?",
-  "How often should I lubricate the machine?",
-];
-
 function pillClass(active: boolean) {
   return `rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
     active
@@ -85,7 +80,15 @@ function pillClass(active: boolean) {
   }`;
 }
 
-function AnswerCard({ match, highlight }: { match: KbMatch; highlight?: boolean }) {
+function AnswerCard({
+  match,
+  highlight,
+  t,
+}: {
+  match: KbMatch;
+  highlight?: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   const isKb = match.kind === "kb";
   const badgeClass = isKb ? KB_CATEGORY_CLASS[match.category as KbCategory] : "border-white/[0.12] bg-white/[0.05] text-zinc-400";
   const badgeLabel = isKb ? KB_CATEGORY_LABEL[match.category as KbCategory] : match.category;
@@ -100,22 +103,26 @@ function AnswerCard({ match, highlight }: { match: KbMatch; highlight?: boolean 
         <span className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${badgeClass}`}>{badgeLabel}</span>
         {!isKb && (
           <span className="rounded-full border border-white/[0.12] bg-white/[0.05] px-2 py-0.5 text-[11px] font-medium text-zinc-400">
-            Ingredient
+            {t("ingredientBadge")}
           </span>
         )}
         {highlight && (
-          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-900">Best match</span>
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-900">{t("bestMatch")}</span>
         )}
       </div>
       <h3 className="mb-1.5 text-sm font-semibold text-zinc-100">{match.title}</h3>
       {match.cause && (
         <p className="mb-1.5 text-sm text-zinc-400">
-          <span className="font-medium text-zinc-200">Likely cause: </span>
+          <span className="font-medium text-zinc-200">{t("likelyCause")} </span>
           {match.cause}
         </p>
       )}
       <p className="whitespace-pre-line text-sm text-zinc-300">{match.answer}</p>
-      {match.source && <p className="mt-2 text-xs text-zinc-500">Source: {match.source}</p>}
+      {match.source && (
+        <p className="mt-2 text-xs text-zinc-500">
+          {t("source")} {match.source}
+        </p>
+      )}
     </div>
   );
 }
@@ -130,6 +137,7 @@ export default function AskDhanuClient({
   recentQuestions: RecentQuestion[];
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [question, setQuestion] = useState("");
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<{ matches: KbMatch[]; confident: boolean } | null>(null);
@@ -143,6 +151,8 @@ export default function AskDhanuClient({
   const [showLog, setShowLog] = useState(false);
   const [showManage, setShowManage] = useState(false);
 
+  const sampleQuestions = [t("sampleQuestion1"), t("sampleQuestion2"), t("sampleQuestion3"), t("sampleQuestion4")];
+
   function ask(q: string) {
     if (!q.trim()) return;
     startTransition(async () => {
@@ -152,7 +162,7 @@ export default function AskDhanuClient({
   }
 
   function remove(id: string) {
-    if (!confirm("Delete this knowledge entry? This cannot be undone.")) return;
+    if (!confirm(t("confirmDeleteEntry"))) return;
     startTransition(async () => {
       await deleteKbEntry(id);
       router.refresh();
@@ -197,21 +207,22 @@ export default function AskDhanuClient({
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Dhanu AI"
-        subtitle="Powered by Dhanu's knowledge and expertise. Ask anything about SOPs, quality, production, equipment, formulations, or workplace procedures."
+        title={t("appTitle")}
+        subtitle={t("appSubtitle")}
         actions={
           <>
+            <LanguageToggle />
             <Link
               href="/graph"
               className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-300 ring-1 ring-inset ring-white/[0.08] transition-colors hover:bg-white/[0.08]"
             >
-              Graph (Beta)
+              {t("graphBeta")}
             </Link>
             <button
               onClick={() => startTransition(() => logout())}
               className="text-xs font-medium text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200"
             >
-              Sign out
+              {t("signOut")}
             </button>
           </>
         }
@@ -228,15 +239,15 @@ export default function AskDhanuClient({
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask Dhanu AI anything..."
+            placeholder={t("askPlaceholder")}
             className="input flex-1"
           />
           <Button type="submit" disabled={pending || !question.trim()}>
-            {pending ? "Searching..." : "Ask"}
+            {pending ? t("searching") : t("ask")}
           </Button>
         </form>
         <div className="mt-3 flex flex-wrap gap-2">
-          {SAMPLE_QUESTIONS.map((s) => (
+          {sampleQuestions.map((s) => (
             <button
               key={s}
               onClick={() => {
@@ -255,59 +266,59 @@ export default function AskDhanuClient({
         <div className="space-y-3">
           {result.matches.length === 0 && (
             <div className="rounded-xl border border-dashed border-white/[0.1] bg-white/[0.02]">
-              <EmptyState title="No matching answer found yet." description="Your question has been logged — add a knowledge entry below to help expand the knowledge base." />
+              <EmptyState title={t("noMatchTitle")} description={t("noMatchDescription")} />
             </div>
           )}
           {result.matches.length > 0 && !result.confident && (
             <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2.5 text-sm text-amber-300">
-              Not fully sure this matches — closest entries are shown below. Your question has been logged for follow-up.
+              {t("notConfidentWarning")}
             </div>
           )}
           {result.matches.map((m, i) => (
-            <AnswerCard key={m.id} match={m} highlight={result.confident && i === 0} />
+            <AnswerCard key={m.id} match={m} highlight={result.confident && i === 0} t={t} />
           ))}
         </div>
       )}
 
       <div className="space-y-3">
         <Button variant="secondary" onClick={() => setShowManage((v) => !v)}>
-          {showManage ? "Hide" : "Manage"} knowledge base
+          {showManage ? t("manageHide") : t("manageShow")}
         </Button>
 
         {showManage && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex gap-1.5">
-                {(["entries", "ingredients"] as const).map((t) => (
+                {(["entries", "ingredients"] as const).map((tab) => (
                   <button
-                    key={t}
+                    key={tab}
                     type="button"
-                    onClick={() => setManageTab(t)}
+                    onClick={() => setManageTab(tab)}
                     className={`rounded-lg px-3 py-1.5 text-[12px] font-medium transition-colors ${
-                      manageTab === t
+                      manageTab === tab
                         ? "bg-zinc-100 text-zinc-900"
                         : "bg-white/[0.04] text-zinc-400 ring-1 ring-inset ring-white/[0.06] hover:bg-white/[0.07]"
                     }`}
                   >
-                    {t === "entries" ? `Knowledge Entries (${entries.length})` : `Ingredients (${ingredients.length})`}
+                    {tab === "entries" ? `${t("tabEntries")} (${entries.length})` : `${t("tabIngredients")} (${ingredients.length})`}
                   </button>
                 ))}
               </div>
               {manageTab === "entries" && (
                 <div className="flex flex-wrap items-center gap-2">
                   <Button variant="secondary" onClick={() => setShowLog((v) => !v)}>
-                    {showLog ? "Hide" : "View"} recent questions
+                    {showLog ? t("hideLog") : t("viewLog")}
                   </Button>
-                  <Button onClick={() => setShowAdd(true)}>+ Add Entry</Button>
+                  <Button onClick={() => setShowAdd(true)}>{t("addEntry")}</Button>
                 </div>
               )}
             </div>
 
             {manageTab === "entries" && showLog && (
               <Card padding="sm">
-                <h3 className="mb-2 text-sm font-semibold text-zinc-100">Recent questions asked</h3>
+                <h3 className="mb-2 text-sm font-semibold text-zinc-100">{t("recentQuestionsTitle")}</h3>
                 {recentQuestions.length === 0 ? (
-                  <p className="text-sm text-zinc-500">No questions asked yet.</p>
+                  <p className="text-sm text-zinc-500">{t("noQuestionsYet")}</p>
                 ) : (
                   <div className="space-y-2">
                     {recentQuestions.map((q) => (
@@ -315,7 +326,7 @@ export default function AskDhanuClient({
                         <p className="text-zinc-200">&ldquo;{q.question}&rdquo;</p>
                         <p className="mt-0.5 text-xs text-zinc-500">
                           {new Date(q.createdAt).toLocaleString("en-AU")} ·{" "}
-                          {q.matchTitle ? `matched: ${q.matchTitle} (score ${q.matchScore})` : "no match found"}
+                          {q.matchTitle ? `${t("matched")}: ${q.matchTitle} (${q.matchScore})` : t("noMatchFound")}
                         </p>
                       </div>
                     ))}
@@ -328,7 +339,7 @@ export default function AskDhanuClient({
               <>
                 <div className="flex flex-wrap gap-2">
                   <button onClick={() => setActiveCategory("ALL")} className={pillClass(activeCategory === "ALL")}>
-                    All
+                    {t("all")}
                   </button>
                   {CATEGORY_ORDER.map((c) => (
                     <button key={c} onClick={() => setActiveCategory(c)} className={pillClass(activeCategory === c)}>
@@ -340,7 +351,7 @@ export default function AskDhanuClient({
                 <input
                   value={browseFilter}
                   onChange={(e) => setBrowseFilter(e.target.value)}
-                  placeholder="Filter entries..."
+                  placeholder={t("filterEntriesPlaceholder")}
                   className="input sm:max-w-xs"
                 />
 
@@ -360,7 +371,7 @@ export default function AskDhanuClient({
                                 }}
                                 className="text-xs font-medium text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200"
                               >
-                                Edit
+                                {t("edit")}
                               </button>
                               <button
                                 onClick={(ev) => {
@@ -369,7 +380,7 @@ export default function AskDhanuClient({
                                 }}
                                 className="text-xs font-medium text-red-400 transition-colors duration-150 ease-out hover:opacity-80"
                               >
-                                Delete
+                                {t("delete")}
                               </button>
                               <span className="text-zinc-500 transition-transform duration-200 group-open:rotate-180">▾</span>
                             </div>
@@ -377,19 +388,23 @@ export default function AskDhanuClient({
                           <div className="mt-3 space-y-1.5 border-t border-white/[0.06] pt-3">
                             {e.cause && (
                               <p className="text-sm text-zinc-400">
-                                <span className="font-medium text-zinc-200">Likely cause: </span>
+                                <span className="font-medium text-zinc-200">{t("likelyCause")} </span>
                                 {e.cause}
                               </p>
                             )}
                             <p className="whitespace-pre-line text-sm text-zinc-300">{e.answer}</p>
-                            {e.source && <p className="text-xs text-zinc-500">Source: {e.source}</p>}
+                            {e.source && (
+                              <p className="text-xs text-zinc-500">
+                                {t("source")} {e.source}
+                              </p>
+                            )}
                           </div>
                         </details>
                       ))}
                     </div>
                   </div>
                 ))}
-                {filteredEntries.length === 0 && <p className="text-sm text-zinc-500">No entries match this filter.</p>}
+                {filteredEntries.length === 0 && <p className="text-sm text-zinc-500">{t("noEntriesMatch")}</p>}
               </>
             )}
 
@@ -398,7 +413,7 @@ export default function AskDhanuClient({
                 <input
                   value={ingredientFilter}
                   onChange={(e) => setIngredientFilter(e.target.value)}
-                  placeholder="Filter ingredients..."
+                  placeholder={t("filterIngredientsPlaceholder")}
                   className="input sm:max-w-xs"
                 />
                 <div className="space-y-2">
@@ -412,7 +427,7 @@ export default function AskDhanuClient({
                           </span>
                           {i.verified && (
                             <span className="shrink-0 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
-                              Verified
+                              {t("verified")}
                             </span>
                           )}
                         </div>
@@ -420,12 +435,16 @@ export default function AskDhanuClient({
                       </summary>
                       <div className="mt-3 space-y-1.5 border-t border-white/[0.06] pt-3">
                         <p className="whitespace-pre-line text-sm text-zinc-300">{i.summary}</p>
-                        {i.source && <p className="text-xs text-zinc-500">Source: {i.source}</p>}
+                        {i.source && (
+                          <p className="text-xs text-zinc-500">
+                            {t("source")} {i.source}
+                          </p>
+                        )}
                       </div>
                     </details>
                   ))}
                   {filteredIngredients.length === 0 && (
-                    <p className="text-sm text-zinc-500">No ingredients match this filter.</p>
+                    <p className="text-sm text-zinc-500">{t("noIngredientsMatch")}</p>
                   )}
                 </div>
               </>

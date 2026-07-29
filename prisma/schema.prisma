@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+enum KbCategory {
+  BLENDING_SOP
+  MACHINE_TROUBLESHOOTING
+  MAINTENANCE_CLEANING
+  SAFETY
+  PARTS
+  QUALITY_CONTROL
+  QUALITY_ASSURANCE
+  HACCP
+  SQF
+  GMP
+  GDP
+  FOOD_SAFETY
+  MANUAL_HANDLING
+  RAW_MATERIALS_INGREDIENTS
+  FORMULATIONS
+  PRODUCTION
+  PACKAGING
+  EQUIPMENT_MAINTENANCE
+  CLEANING_SANITATION
+  ENVIRONMENTAL_MONITORING
+  WHS
+  TEAMWORK_COMMUNICATION
+  TRAINING_INDUCTION
+  SOPS
+  POLICIES_PROCEDURES
+}
+
+model KnowledgeEntry {
+  id        String     @id @default(cuid())
+  category  KbCategory
+  title     String
+  keywords  String
+  cause     String?
+  answer    String
+  source    String?
+  order     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([category])
+}
+
+model Ingredient {
+  id                 String    @id @default(cuid())
+  name               String
+  alternateName      String?
+  type               String
+  category           String?
+  aanValue           String?
+  notes              String?
+  verified           Boolean   @default(false)
+  verificationSource String?
+  classification     String?
+  mainBenefit        String?
+  usedFor            String?
+  synonyms           String?
+  chemicalName       String?
+  casNumber          String?
+  typicalDosage      String?
+  storageConditions  String?
+  safetyNotes        String?
+  regulatoryStatus   String?
+  tgaStatus          String?
+  apvmaStatus        String?
+  fdaStatus          String?
+  emaStatus          String?
+  aicisStatus        String?
+  source             String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model KbQuestionLog {
+  id          String   @id @default(cuid())
+  question    String
+  matchedId   String?
+  matchTitle  String?
+  matchScore  Float?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}

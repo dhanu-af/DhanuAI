@@ -3,11 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { KbGraphEntry } from "@/lib/graph/types";
 import { KB_CATEGORY_COLOR } from "@/lib/graph/types";
-import { KB_CATEGORY_LABEL } from "@/lib/ui";
+import { getCategoryLabel } from "@/lib/ui";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | null; onClose: () => void }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
     <AnimatePresence>
       {entry && (
@@ -38,7 +38,7 @@ export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | n
                 />
                 <div>
                   <h2 className="text-lg font-semibold text-zinc-100">{entry.title}</h2>
-                  <p className="mt-1 text-xs text-zinc-400">{KB_CATEGORY_LABEL[entry.category]}</p>
+                  <p className="mt-1 text-xs text-zinc-400">{getCategoryLabel(entry.category, lang)}</p>
                 </div>
               </div>
               <button

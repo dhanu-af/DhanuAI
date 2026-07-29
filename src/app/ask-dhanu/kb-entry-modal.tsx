@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createKbEntry, updateKbEntry, extractPdfText } from "@/lib/actions/kb-actions";
-import { KB_CATEGORY_LABEL } from "@/lib/ui";
+import { KB_CATEGORY_LABEL, getCategoryLabel } from "@/lib/ui";
 import type { KbCategory } from "@/generated/prisma";
 import type { KbEntry } from "./ask-dhanu-client";
 import { Button } from "@/components/ui/Button";
@@ -35,7 +35,7 @@ export default function KbEntryModal({
   onClose: () => void;
 }) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [pending, startTransition] = useTransition();
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
@@ -126,7 +126,7 @@ export default function KbEntryModal({
             >
               {CATEGORY_OPTIONS.map((c) => (
                 <option key={c} value={c} className="bg-[#0d0d10]">
-                  {KB_CATEGORY_LABEL[c]}
+                  {getCategoryLabel(c, lang)}
                 </option>
               ))}
             </select>

@@ -1,4 +1,5 @@
 import type { KbCategory } from "@/generated/prisma";
+import type { Lang } from "./i18n/translations";
 
 export const KB_CATEGORY_LABEL: Record<KbCategory, string> = {
   BLENDING_SOP: "Blending SOP",
@@ -27,6 +28,38 @@ export const KB_CATEGORY_LABEL: Record<KbCategory, string> = {
   SOPS: "SOPs",
   POLICIES_PROCEDURES: "Policies & Procedures",
 };
+
+export const KB_CATEGORY_LABEL_SI: Record<KbCategory, string> = {
+  BLENDING_SOP: "මිශ්‍රණය SOP",
+  MACHINE_TROUBLESHOOTING: "යන්ත්‍ර දෝෂ නිරාකරණය",
+  MAINTENANCE_CLEANING: "නඩත්තුව සහ පිරිසිදුකිරීම",
+  SAFETY: "ආරක්ෂාව",
+  PARTS: "අමතර කොටස් සහ මෙවලම්",
+  QUALITY_CONTROL: "තත්ත්ව පාලනය",
+  QUALITY_ASSURANCE: "තත්ත්ව සහතිකකරණය",
+  HACCP: "HACCP",
+  SQF: "SQF",
+  GMP: "GMP",
+  GDP: "යහපත් ලේඛන පිළිවෙත (GDP)",
+  FOOD_SAFETY: "ආහාර ආරක්ෂාව",
+  MANUAL_HANDLING: "අතින් හැසිරවීම",
+  RAW_MATERIALS_INGREDIENTS: "අමුද්‍රව්‍ය",
+  FORMULATIONS: "සූත්‍රීකරණ",
+  PRODUCTION: "නිෂ්පාදනය",
+  PACKAGING: "පැකේජීකරණය",
+  EQUIPMENT_MAINTENANCE: "උපකරණ නඩත්තුව",
+  CLEANING_SANITATION: "පිරිසිදුකිරීම හා සනීපාරක්ෂාව",
+  ENVIRONMENTAL_MONITORING: "පාරිසරික නිරීක්ෂණය",
+  WHS: "වැඩපොළ සෞඛ්‍ය හා ආරක්ෂාව (WHS)",
+  TEAMWORK_COMMUNICATION: "කණ්ඩායම් වැඩ සහ සන්නිවේදනය",
+  TRAINING_INDUCTION: "පුහුණුව සහ අභ්‍යාසය",
+  SOPS: "SOPs",
+  POLICIES_PROCEDURES: "ප්‍රතිපත්ති හා ක්‍රියාපටිපාටි",
+};
+
+export function getCategoryLabel(category: KbCategory, lang: Lang): string {
+  return lang === "si" ? KB_CATEGORY_LABEL_SI[category] : KB_CATEGORY_LABEL[category];
+}
 
 /** Tinted glass-style badges — matches Dhanu Brain's dark UI (transparent color-500/10 fills, ring-inset borders). */
 export const KB_CATEGORY_CLASS: Record<KbCategory, string> = {

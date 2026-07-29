@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { askDhanu, deleteKbEntry, type KbMatch } from "@/lib/actions/kb-actions";
-import { KB_CATEGORY_CLASS, KB_CATEGORY_LABEL } from "@/lib/ui";
+import { KB_CATEGORY_CLASS, getCategoryLabel } from "@/lib/ui";
 import type { KbCategory } from "@/generated/prisma";
 import KbEntryModal from "./kb-entry-modal";
 import { Card } from "@/components/ui/Card";
@@ -84,14 +84,16 @@ function AnswerCard({
   match,
   highlight,
   t,
+  lang,
 }: {
   match: KbMatch;
   highlight?: boolean;
   t: ReturnType<typeof useLanguage>["t"];
+  lang: ReturnType<typeof useLanguage>["lang"];
 }) {
   const isKb = match.kind === "kb";
   const badgeClass = isKb ? KB_CATEGORY_CLASS[match.category as KbCategory] : "border-white/[0.12] bg-white/[0.05] text-zinc-400";
-  const badgeLabel = isKb ? KB_CATEGORY_LABEL[match.category as KbCategory] : match.category;
+  const badgeLabel = isKb ? getCategoryLabel(match.category as KbCategory, lang) : match.category;
 
   return (
     <div
@@ -137,7 +139,7 @@ export default function AskDhanuClient({
   recentQuestions: RecentQuestion[];
 }) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [question, setQuestion] = useState("");
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<{ matches: KbMatch[]; confident: boolean } | null>(null);
@@ -275,7 +277,7 @@ export default function AskDhanuClient({
             </div>
           )}
           {result.matches.map((m, i) => (
-            <AnswerCard key={m.id} match={m} highlight={result.confident && i === 0} t={t} />
+            <AnswerCard key={m.id} match={m} highlight={result.confident && i === 0} t={t} lang={lang} />
           ))}
         </div>
       )}
@@ -343,7 +345,7 @@ export default function AskDhanuClient({
                   </button>
                   {CATEGORY_ORDER.map((c) => (
                     <button key={c} onClick={() => setActiveCategory(c)} className={pillClass(activeCategory === c)}>
-                      {KB_CATEGORY_LABEL[c]}
+                      {getCategoryLabel(c, lang)}
                     </button>
                   ))}
                 </div>
@@ -357,7 +359,7 @@ export default function AskDhanuClient({
 
                 {CATEGORY_ORDER.filter((c) => grouped.has(c)).map((c) => (
                   <div key={c} className="space-y-2">
-                    <h3 className="text-sm font-semibold text-zinc-500">{KB_CATEGORY_LABEL[c]}</h3>
+                    <h3 className="text-sm font-semibold text-zinc-500">{getCategoryLabel(c, lang)}</h3>
                     <div className="space-y-2">
                       {grouped.get(c)!.map((e) => (
                         <details key={e.id} className="group rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">

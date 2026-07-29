@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { askDhanu, deleteKbEntry, type KbMatch } from "@/lib/actions/kb-actions";
 import { KB_CATEGORY_CLASS, KB_CATEGORY_LABEL } from "@/lib/ui";
@@ -199,12 +200,20 @@ export default function AskDhanuClient({
         title="Dhanu AI"
         subtitle="Powered by Dhanu's knowledge and expertise. Ask anything about SOPs, quality, production, equipment, formulations, or workplace procedures."
         actions={
-          <button
-            onClick={() => startTransition(() => logout())}
-            className="text-xs font-medium text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200"
-          >
-            Sign out
-          </button>
+          <>
+            <Link
+              href="/graph"
+              className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-300 ring-1 ring-inset ring-white/[0.08] transition-colors hover:bg-white/[0.08]"
+            >
+              Graph (Beta)
+            </Link>
+            <button
+              onClick={() => startTransition(() => logout())}
+              className="text-xs font-medium text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200"
+            >
+              Sign out
+            </button>
+          </>
         }
       />
 

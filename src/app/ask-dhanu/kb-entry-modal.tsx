@@ -13,7 +13,7 @@ const CATEGORY_OPTIONS = Object.keys(KB_CATEGORY_LABEL) as KbCategory[];
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-zinc-500">{label}</span>
       {children}
     </label>
   );
@@ -89,18 +89,18 @@ export default function KbEntryModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="card-elevated max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-surface p-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-white/[0.1] bg-[#0d0d10] p-5 shadow-2xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-foreground">
+          <h2 className="text-base font-semibold text-zinc-100">
             {entry ? "Edit Knowledge Entry" : "Add Knowledge Entry"}
           </h2>
-          <button onClick={onClose} className="text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground">
+          <button onClick={onClose} className="text-zinc-500 transition-colors duration-150 ease-out hover:text-zinc-200">
             ✕
           </button>
         </div>
 
-        <div className="mb-4 rounded-lg border border-primary/30 bg-primary/5 p-3">
+        <div className="mb-4 rounded-lg border border-white/[0.1] bg-white/[0.04] p-3">
           <Field label="Or upload a PDF — its text will fill in the Answer field below for you to review">
             <input
               ref={fileInputRef}
@@ -108,11 +108,11 @@ export default function KbEntryModal({
               accept="application/pdf"
               onChange={handlePdfChange}
               disabled={extracting}
-              className="w-full text-sm text-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground file:transition-colors file:duration-150 file:ease-out"
+              className="w-full text-sm text-zinc-200 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-zinc-900 file:transition-colors file:duration-150 file:ease-out"
             />
           </Field>
-          {extracting && <p className="mt-1.5 text-xs text-muted-foreground">Extracting text…</p>}
-          {extractError && <p className="mt-1.5 text-xs text-danger">{extractError}</p>}
+          {extracting && <p className="mt-1.5 text-xs text-zinc-500">Extracting text…</p>}
+          {extractError && <p className="mt-1.5 text-xs text-red-400">{extractError}</p>}
         </div>
 
         <form action={submit} className="space-y-3">
@@ -123,7 +123,7 @@ export default function KbEntryModal({
               className="input"
             >
               {CATEGORY_OPTIONS.map((c) => (
-                <option key={c} value={c}>
+                <option key={c} value={c} className="bg-[#0d0d10]">
                   {KB_CATEGORY_LABEL[c]}
                 </option>
               ))}

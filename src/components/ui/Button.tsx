@@ -4,11 +4,11 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "success";
 type Size = "sm" | "md";
 
 const VARIANT: Record<Variant, string> = {
-  primary: "bg-primary text-primary-foreground hover:opacity-90 border border-transparent",
-  secondary: "border border-border bg-surface text-foreground hover:bg-surface-muted",
-  ghost: "border border-transparent text-muted-foreground hover:bg-surface-muted hover:text-foreground",
-  danger: "border border-danger/30 bg-danger/10 text-danger hover:bg-danger/15",
-  success: "border border-success/30 bg-success/10 text-success hover:bg-success/15",
+  primary: "bg-zinc-100 text-zinc-900 hover:bg-white",
+  secondary: "border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:bg-white/[0.08]",
+  ghost: "border border-transparent text-zinc-400 hover:bg-white/[0.05] hover:text-zinc-100",
+  danger: "border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/15",
+  success: "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15",
 };
 
 const SIZE: Record<Size, string> = {

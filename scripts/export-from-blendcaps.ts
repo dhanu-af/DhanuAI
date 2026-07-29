@@ -9,7 +9,7 @@
  *   BLENDCAPS_DATABASE_URL="<the eagle-labs-schedule DATABASE_URL>" npm run export:blendcaps
  */
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma";
 import { writeFileSync } from "fs";
 import path from "path";
 

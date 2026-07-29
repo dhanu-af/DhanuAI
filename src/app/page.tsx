@@ -26,19 +26,24 @@ export default async function HomePage() {
           id: e.id,
           category: e.category,
           title: e.title,
+          titleSi: e.titleSi,
           keywords: e.keywords,
           cause: e.cause,
+          causeSi: e.causeSi,
           answer: e.answer,
+          answerSi: e.answerSi,
           source: e.source,
         }))}
         ingredients={ingredients.map((i) => ({
           id: i.id,
           name: i.name,
+          nameSi: i.nameSi,
           type: i.type,
           category: i.category,
           verified: i.verified,
           keywords: ingredientKeywords(i),
           summary: ingredientAnswer(i),
+          summarySi: i.summarySi,
           source: i.source,
         }))}
         recentQuestions={recentQuestions.map((q) => ({

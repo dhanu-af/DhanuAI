@@ -61,8 +61,11 @@ export type KbMatch = {
   kind: "kb" | "ingredient";
   category: string;
   title: string;
+  titleSi: string | null;
   cause: string | null;
+  causeSi: string | null;
   answer: string;
+  answerSi: string | null;
   source: string | null;
   score: number;
 };
@@ -85,8 +88,11 @@ export async function askDhanu(question: string): Promise<{
     kind: "kb" as const,
     category: e.category as string,
     title: e.title,
+    titleSi: e.titleSi,
     cause: e.cause,
+    causeSi: e.causeSi,
     answer: e.answer,
+    answerSi: e.answerSi,
     source: e.source,
     score: scoreEntry(questionTokens, e),
   }));
@@ -96,8 +102,11 @@ export async function askDhanu(question: string): Promise<{
     kind: "ingredient" as const,
     category: i.type,
     title: i.name,
+    titleSi: i.nameSi,
     cause: null as string | null,
+    causeSi: null as string | null,
     answer: ingredientAnswer(i),
+    answerSi: i.summarySi,
     source: i.source,
     score: scoreEntry(questionTokens, {
       title: i.name,
@@ -149,6 +158,9 @@ export async function createKbEntry(data: {
   cause?: string;
   answer: string;
   source?: string;
+  titleSi?: string;
+  causeSi?: string;
+  answerSi?: string;
 }) {
   const session = await getSession();
   if (!session) throw new Error("Not authorized");
@@ -167,6 +179,9 @@ export async function updateKbEntry(
     cause?: string;
     answer: string;
     source?: string;
+    titleSi?: string;
+    causeSi?: string;
+    answerSi?: string;
   }
 ) {
   const session = await getSession();

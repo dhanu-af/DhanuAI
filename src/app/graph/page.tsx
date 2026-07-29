@@ -22,9 +22,12 @@ export default async function GraphPage() {
       entries={entries.map((e) => ({
         id: e.id,
         title: e.title,
+        titleSi: e.titleSi,
         category: e.category,
         cause: e.cause,
+        causeSi: e.causeSi,
         answer: e.answer,
+        answerSi: e.answerSi,
         source: e.source,
       }))}
       total={total}

@@ -6,6 +6,10 @@ import { KB_CATEGORY_COLOR } from "@/lib/graph/types";
 import { getCategoryLabel } from "@/lib/ui";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
+function pick(en: string, si: string | null, lang: "en" | "si"): string {
+  return lang === "si" && si ? si : en;
+}
+
 export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | null; onClose: () => void }) {
   const { t, lang } = useLanguage();
   return (
@@ -37,7 +41,7 @@ export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | n
                   style={{ background: KB_CATEGORY_COLOR[entry.category] }}
                 />
                 <div>
-                  <h2 className="text-lg font-semibold text-zinc-100">{entry.title}</h2>
+                  <h2 className="text-lg font-semibold text-zinc-100">{pick(entry.title, entry.titleSi, lang)}</h2>
                   <p className="mt-1 text-xs text-zinc-400">{getCategoryLabel(entry.category, lang)}</p>
                 </div>
               </div>
@@ -54,13 +58,13 @@ export default function EntryModal({ entry, onClose }: { entry: KbGraphEntry | n
             {entry.cause && (
               <div className="mt-4">
                 <span className="text-[11px] uppercase tracking-wider text-zinc-500">{t("likelyCause")}</span>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">{entry.cause}</p>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">{pick(entry.cause, entry.causeSi, lang)}</p>
               </div>
             )}
 
             <div className="mt-4">
               <span className="text-[11px] uppercase tracking-wider text-zinc-500">{t("answerSolution")}</span>
-              <p className="mt-1.5 whitespace-pre-line text-[13px] leading-relaxed text-zinc-300">{entry.answer}</p>
+              <p className="mt-1.5 whitespace-pre-line text-[13px] leading-relaxed text-zinc-300">{pick(entry.answer, entry.answerSi, lang)}</p>
             </div>
 
             {entry.source && (

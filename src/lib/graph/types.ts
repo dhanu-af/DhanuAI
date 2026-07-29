@@ -3,9 +3,12 @@ import type { KbCategory } from "@/generated/prisma";
 export interface KbGraphEntry {
   id: string;
   title: string;
+  titleSi: string | null;
   category: KbCategory;
   cause: string | null;
+  causeSi: string | null;
   answer: string;
+  answerSi: string | null;
   source: string | null;
 }
 

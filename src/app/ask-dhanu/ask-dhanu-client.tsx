@@ -19,22 +19,32 @@ export type KbEntry = {
   id: string;
   category: KbCategory;
   title: string;
+  titleSi: string | null;
   keywords: string;
   cause: string | null;
+  causeSi: string | null;
   answer: string;
+  answerSi: string | null;
   source: string | null;
 };
 
 export type IngredientEntry = {
   id: string;
   name: string;
+  nameSi: string | null;
   type: string;
   category: string | null;
   verified: boolean;
   keywords: string;
   summary: string;
+  summarySi: string | null;
   source: string | null;
 };
+
+/** Prefers the Sinhala field when active language is "si" and a translation exists yet, else falls back to English. */
+function pick(en: string, si: string | null, lang: "en" | "si"): string {
+  return lang === "si" && si ? si : en;
+}
 
 type RecentQuestion = {
   id: string;
@@ -112,14 +122,14 @@ function AnswerCard({
           <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-900">{t("bestMatch")}</span>
         )}
       </div>
-      <h3 className="mb-1.5 text-sm font-semibold text-zinc-100">{match.title}</h3>
+      <h3 className="mb-1.5 text-sm font-semibold text-zinc-100">{pick(match.title, match.titleSi, lang)}</h3>
       {match.cause && (
         <p className="mb-1.5 text-sm text-zinc-400">
           <span className="font-medium text-zinc-200">{t("likelyCause")} </span>
-          {match.cause}
+          {pick(match.cause, match.causeSi, lang)}
         </p>
       )}
-      <p className="whitespace-pre-line text-sm text-zinc-300">{match.answer}</p>
+      <p className="whitespace-pre-line text-sm text-zinc-300">{pick(match.answer, match.answerSi, lang)}</p>
       {match.source && (
         <p className="mt-2 text-xs text-zinc-500">
           {t("source")} {match.source}
@@ -364,7 +374,7 @@ export default function AskDhanuClient({
                       {grouped.get(c)!.map((e) => (
                         <details key={e.id} className="group rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">
                           <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
-                            <span className="text-sm font-medium text-zinc-100">{e.title}</span>
+                            <span className="text-sm font-medium text-zinc-100">{pick(e.title, e.titleSi, lang)}</span>
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={(ev) => {
@@ -391,10 +401,10 @@ export default function AskDhanuClient({
                             {e.cause && (
                               <p className="text-sm text-zinc-400">
                                 <span className="font-medium text-zinc-200">{t("likelyCause")} </span>
-                                {e.cause}
+                                {pick(e.cause, e.causeSi, lang)}
                               </p>
                             )}
-                            <p className="whitespace-pre-line text-sm text-zinc-300">{e.answer}</p>
+                            <p className="whitespace-pre-line text-sm text-zinc-300">{pick(e.answer, e.answerSi, lang)}</p>
                             {e.source && (
                               <p className="text-xs text-zinc-500">
                                 {t("source")} {e.source}
@@ -423,7 +433,7 @@ export default function AskDhanuClient({
                     <details key={i.id} className="group rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
-                          <span className="truncate text-sm font-medium text-zinc-100">{i.name}</span>
+                          <span className="truncate text-sm font-medium text-zinc-100">{pick(i.name, i.nameSi, lang)}</span>
                           <span className="shrink-0 rounded-full border border-white/[0.12] bg-white/[0.05] px-2 py-0.5 text-[11px] font-medium text-zinc-400">
                             {i.type}
                           </span>
@@ -436,7 +446,7 @@ export default function AskDhanuClient({
                         <span className="shrink-0 text-zinc-500 transition-transform duration-200 group-open:rotate-180">▾</span>
                       </summary>
                       <div className="mt-3 space-y-1.5 border-t border-white/[0.06] pt-3">
-                        <p className="whitespace-pre-line text-sm text-zinc-300">{i.summary}</p>
+                        <p className="whitespace-pre-line text-sm text-zinc-300">{pick(i.summary, i.summarySi, lang)}</p>
                         {i.source && (
                           <p className="text-xs text-zinc-500">
                             {t("source")} {i.source}
